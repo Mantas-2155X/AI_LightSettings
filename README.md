@@ -7,3 +7,7 @@ This plugin allows you to change some light settings.
 
 **Features:**  
 * Backlight Intensity.  
+
+Left: Full intensity  
+Right: Zero intensity  
+![image1](https://i.imgur.com/ncIJROH.png)
