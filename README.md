@@ -10,4 +10,4 @@ This plugin allows you to change some light settings.
 
 Left: Full intensity  
 Right: Zero intensity  
-![image1](https://i.imgur.com/ncIJROH.png)
+![image1](https://i.imgur.com/vrR2LZ4.png)
