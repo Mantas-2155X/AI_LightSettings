@@ -5,11 +5,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace AI_LightSettings {
-    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "1.0")]
+    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "1.01")]
     public class AI_LightSettings : BaseUnityPlugin {
         
         private Light backLight;
-        public static ConfigWrapper<float> backLightIntensity { get; private set; }
+        public static ConfigEntry<float> backLightIntensity { get; private set; }
 
         void SceneChanged(Scene oldScene, Scene newScene) {
             GameObject backLightObj = GameObject.Find("Directional Light Back");
@@ -24,7 +24,7 @@ namespace AI_LightSettings {
         }
 
         void Awake() {
-            backLightIntensity = Config.GetSetting("BackLight", "Intensity", 1f, new ConfigDescription("Intensity of the Backlight.", new AcceptableValueRange<float>(0f, 1f)));
+            backLightIntensity = Config.AddSetting(new ConfigDefinition("Backlight", "Intensity"), 1f, new ConfigDescription("Intensity of the Backlight.", new AcceptableValueRange<float>(0f, 1f)));
         }
         
         void Update() {
