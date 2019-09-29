@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace AI_LightSettings {
-    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "1.01")]
+    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "1.1")]
     public class AI_LightSettings : BaseUnityPlugin {
         
         private Light backLight;
