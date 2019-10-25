@@ -12,7 +12,7 @@ using System.Linq;
 using JetBrains.Annotations;
 
 namespace AI_LightSettings {
-    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "pre2.0.0")]
+    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "2.0.0")]
     public class AI_LightSettings : BaseUnityPlugin
     {
         private static List<Light> faceLights;
@@ -20,39 +20,43 @@ namespace AI_LightSettings {
         private static Light backLight;
         private static Light camLight;
         
+        private static ConfigEntry<bool> faceLightsControl { get; set; }
         private static ConfigEntry<float> faceLightsIntensity { get; set; }
         private static ConfigEntry<Color> faceLightsColor { get; set; }
         
+        private static ConfigEntry<bool> backLightControl { get; set; }
         private static ConfigEntry<float> backLightIntensity { get; set; }
         private static ConfigEntry<Color> backLightColor { get; set; }
-        
-        private static ConfigEntry<float> makerBackLightIntensity { get; set; }
-        private static ConfigEntry<Color> makerBackLightColor { get; set; }
-        
+
+        private static ConfigEntry<bool> camLightControl { get; set; }
         private static ConfigEntry<float> camLightIntensity { get; set; }
         private static ConfigEntry<Color> camLightColor { get; set; }
+        
+        private static ConfigEntry<bool> makerBackLightControl { get; set; }
+        private static ConfigEntry<float> makerBackLightIntensity { get; set; }
+        private static ConfigEntry<Color> makerBackLightColor { get; set; }
 
         private void Update()
         {
-            if (backLight != null)
+            if (backLightControl.Value && backLight != null)
             {
                 backLight.intensity = backLightIntensity.Value;
                 backLight.color = backLightColor.Value;
             }
+
+            if (camLightControl.Value && camLight != null)
+            {
+                camLight.intensity = camLightIntensity.Value;
+                camLight.color = camLightColor.Value;
+            }
             
-            if (makerBackLight != null)
+            if (makerBackLightControl.Value && makerBackLight != null)
             {
                 makerBackLight.intensity = makerBackLightIntensity.Value;
                 makerBackLight.color = makerBackLightColor.Value;
             }
 
-            if (camLight != null)
-            {
-                camLight.intensity = camLightIntensity.Value;
-                camLight.color = camLightColor.Value;
-            }
-
-            if (faceLights.Count == 0) return;
+            if (!faceLightsControl.Value || faceLights.Count == 0) return;
             
             foreach (var faceLight in faceLights.Where(faceLight => faceLight != null))
             {
@@ -65,18 +69,22 @@ namespace AI_LightSettings {
         {
             faceLights = new List<Light>();
             
-            faceLightsIntensity = Config.AddSetting(new ConfigDefinition("Facelights", "Intensity"), 0.5f, new ConfigDescription("Intensity of the Facelights.", new AcceptableValueRange<float>(0f, 1f)));
-            faceLightsColor = Config.AddSetting(new ConfigDefinition("Facelights", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Facelights."));
+            faceLightsControl = Config.AddSetting(new ConfigDefinition("Facelights", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
+            faceLightsIntensity = Config.AddSetting(new ConfigDefinition("Facelights", "Intensity"), 0.5f, new ConfigDescription("Intensity of the Facelights.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            faceLightsColor = Config.AddSetting(new ConfigDefinition("Facelights", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Facelights.", null, new ConfigurationManagerAttributes { Order = 1 }));
             
-            backLightIntensity = Config.AddSetting(new ConfigDefinition("Backlight", "Intensity"), 0.5f, new ConfigDescription("Intensity of the Backlight.", new AcceptableValueRange<float>(0f, 1f)));
-            backLightColor = Config.AddSetting(new ConfigDefinition("Backlight", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Backlight."));
+            backLightControl = Config.AddSetting(new ConfigDefinition("Backlight", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
+            backLightIntensity = Config.AddSetting(new ConfigDefinition("Backlight", "Intensity"), 0.5f, new ConfigDescription("Intensity of the Backlight.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            backLightColor = Config.AddSetting(new ConfigDefinition("Backlight", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Backlight.", null, new ConfigurationManagerAttributes { Order = 1 }));
             
-            makerBackLightIntensity = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Intensity"), 1f, new ConfigDescription("Intensity of the Maker Backlight.", new AcceptableValueRange<float>(0f, 1f)));
-            makerBackLightColor = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Color"), new Color(0.470f, 0.599f, 0.650f), new ConfigDescription("Color of the Maker Backlight."));
+            camLightControl = Config.AddSetting(new ConfigDefinition("Camlight", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
+            camLightIntensity = Config.AddSetting(new ConfigDefinition("Camlight", "Intensity"), 0.55f, new ConfigDescription("Intensity of the Camlight.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            camLightColor = Config.AddSetting(new ConfigDefinition("Camlight", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Camlight.", null, new ConfigurationManagerAttributes { Order = 1 }));
+            
+            makerBackLightControl = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
+            makerBackLightIntensity = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Intensity"), 1f, new ConfigDescription("Intensity of the Maker Backlight.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            makerBackLightColor = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Color"), new Color(0.470f, 0.599f, 0.650f), new ConfigDescription("Color of the Maker Backlight.", null, new ConfigurationManagerAttributes { Order = 1 }));
 
-            camLightIntensity = Config.AddSetting(new ConfigDefinition("Camlight", "Intensity"), 0.55f, new ConfigDescription("Intensity of the Camlight.", new AcceptableValueRange<float>(0f, 1f)));
-            camLightColor = Config.AddSetting(new ConfigDefinition("Camlight", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Camlight."));
-            
             HarmonyWrapper.PatchAll(typeof(AI_LightSettings));
         }
         
@@ -121,8 +129,6 @@ namespace AI_LightSettings {
         [UsedImplicitly]
         public static void CharaCustom_Start_Postfix(CharaCustom.CharaCustom __instance)
         {
-            if (__instance == null) return;
-
             Transform MakerBackLight = __instance.transform.Find("CustomControl/CharaCamera/Main Camera/Lights Custom/Directional Light Back");
 
             if (MakerBackLight == null) return;
