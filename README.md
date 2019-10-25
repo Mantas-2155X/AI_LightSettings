@@ -14,7 +14,7 @@ This plugin allows you to change some light settings.
 * Backlight color & intensity,  
 * Maker backlight color & intensity  
 
-Intensity, full, zero. See edges of clothes
+Intensity: full, zero. See edges of clothes
 ![image1](https://i.imgur.com/vrR2LZ4.png)
 
 Randomised colors for multiple lights
