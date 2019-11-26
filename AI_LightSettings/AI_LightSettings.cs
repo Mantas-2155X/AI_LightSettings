@@ -9,12 +9,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-using JetBrains.Annotations;
-
 namespace AI_LightSettings {
-    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), "2.0.0")]
+    [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), VERSION)][BepInProcess("AI-Syoujyo")]
     public class AI_LightSettings : BaseUnityPlugin
     {
+        public const string VERSION = "2.0.0";
+
         private static List<Light> faceLights;
         private static Light makerBackLight;
         private static Light backLight;
@@ -89,7 +89,6 @@ namespace AI_LightSettings {
         }
         
         [HarmonyPostfix, HarmonyPatch(typeof(AIProject.ActorController), "InitializeFaceLight")]
-        [UsedImplicitly]
         public static void ActorController_InitializeFaceLight_Postfix(AIProject.ActorController __instance)
         {
             if (__instance.FaceLight == null) return;
@@ -97,7 +96,6 @@ namespace AI_LightSettings {
         }
         
         [HarmonyPostfix, HarmonyPatch(typeof(AIProject.ActorCameraControl), "Start")]
-        [UsedImplicitly]
         public static void ActorCameraControl_Start_Postfix(AIProject.ActorCameraControl __instance)
         {
             Traverse traverse = Traverse.Create(__instance);
@@ -126,7 +124,6 @@ namespace AI_LightSettings {
         }
         
         [HarmonyPostfix, HarmonyPatch(typeof(CharaCustom.CharaCustom), "Start")]
-        [UsedImplicitly]
         public static void CharaCustom_Start_Postfix(CharaCustom.CharaCustom __instance)
         {
             Transform MakerBackLight = __instance.transform.Find("CustomControl/CharaCamera/Main Camera/Lights Custom/Directional Light Back");
@@ -138,6 +135,5 @@ namespace AI_LightSettings {
             if (comp != null)
                 makerBackLight = comp;
         }
-
     }
 }
