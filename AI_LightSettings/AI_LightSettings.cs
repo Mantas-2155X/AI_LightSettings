@@ -13,13 +13,23 @@ namespace AI_LightSettings {
     [BepInPlugin(nameof(AI_LightSettings), nameof(AI_LightSettings), VERSION)][BepInProcess("AI-Syoujyo")]
     public class AI_LightSettings : BaseUnityPlugin
     {
-        public const string VERSION = "2.0.0";
+        public const string VERSION = "2.1.0";
 
+        private const string ENABLE = "Enable Settings";
+        private const string INTENSITY = "Intensity";
+        private const string COLOR = "Color";
+        
         private static List<Light> faceLights;
-        private static Light makerBackLight;
         private static Light backLight;
         private static Light camLight;
         
+        private static Light dirBackLight;
+        private static Light dirKeyLight;
+        private static Light dirTopLight;
+        private static Light dirFillLight;
+        
+        private static Light makerBackLight;
+
         private static ConfigEntry<bool> faceLightsControl { get; set; }
         private static ConfigEntry<float> faceLightsIntensity { get; set; }
         private static ConfigEntry<Color> faceLightsColor { get; set; }
@@ -31,6 +41,24 @@ namespace AI_LightSettings {
         private static ConfigEntry<bool> camLightControl { get; set; }
         private static ConfigEntry<float> camLightIntensity { get; set; }
         private static ConfigEntry<Color> camLightColor { get; set; }
+        
+        
+        private static ConfigEntry<bool> dirBackLightControl { get; set; }
+        private static ConfigEntry<float> dirBackLightIntensity { get; set; }
+        private static ConfigEntry<Color> dirBackLightColor { get; set; }
+        
+        private static ConfigEntry<bool> dirKeyLightControl { get; set; }
+        private static ConfigEntry<float> dirKeyLightIntensity { get; set; }
+        private static ConfigEntry<Color> dirKeyLightColor { get; set; }
+
+        private static ConfigEntry<bool> dirTopLightControl { get; set; }
+        private static ConfigEntry<float> dirTopLightIntensity { get; set; }
+        private static ConfigEntry<Color> dirTopLightColor { get; set; }
+
+        private static ConfigEntry<bool> dirFillLightControl { get; set; }
+        private static ConfigEntry<float> dirFillLightIntensity { get; set; }
+        private static ConfigEntry<Color> dirFillLightColor { get; set; }
+
         
         private static ConfigEntry<bool> makerBackLightControl { get; set; }
         private static ConfigEntry<float> makerBackLightIntensity { get; set; }
@@ -56,6 +84,30 @@ namespace AI_LightSettings {
                 makerBackLight.color = makerBackLightColor.Value;
             }
 
+            if (dirBackLightControl.Value && dirBackLight != null)
+            {
+                dirBackLight.intensity = dirBackLightIntensity.Value;
+                dirBackLight.color = dirBackLightColor.Value;
+            }
+            
+            if (dirFillLightControl.Value && dirFillLight != null)
+            {
+                dirFillLight.intensity = dirFillLightIntensity.Value;
+                dirFillLight.color = dirFillLightColor.Value;
+            }
+            
+            if (dirKeyLightControl.Value && dirKeyLight != null)
+            {
+                dirKeyLight.intensity = dirKeyLightIntensity.Value;
+                dirKeyLight.color = dirKeyLightColor.Value;
+            }
+            
+            if (dirTopLightControl.Value && dirTopLight != null)
+            {
+                dirTopLight.intensity = dirTopLightIntensity.Value;
+                dirTopLight.color = dirTopLightColor.Value;
+            }
+
             if (!faceLightsControl.Value || faceLights.Count == 0) return;
             
             foreach (var faceLight in faceLights.Where(faceLight => faceLight != null))
@@ -69,21 +121,39 @@ namespace AI_LightSettings {
         {
             faceLights = new List<Light>();
             
-            faceLightsControl = Config.AddSetting(new ConfigDefinition("Facelights", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
-            faceLightsIntensity = Config.AddSetting(new ConfigDefinition("Facelights", "Intensity"), 0.5f, new ConfigDescription("Intensity of the Facelights.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
-            faceLightsColor = Config.AddSetting(new ConfigDefinition("Facelights", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Facelights.", null, new ConfigurationManagerAttributes { Order = 1 }));
+            faceLightsControl = Config.AddSetting(new ConfigDefinition("Facelights", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            faceLightsIntensity = Config.AddSetting(new ConfigDefinition("Facelights", INTENSITY), 0.5f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            faceLightsColor = Config.AddSetting(new ConfigDefinition("Facelights", COLOR), new Color(1, 1, 1), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
             
-            backLightControl = Config.AddSetting(new ConfigDefinition("Backlight", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
-            backLightIntensity = Config.AddSetting(new ConfigDefinition("Backlight", "Intensity"), 0.5f, new ConfigDescription("Intensity of the Backlight.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
-            backLightColor = Config.AddSetting(new ConfigDefinition("Backlight", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Backlight.", null, new ConfigurationManagerAttributes { Order = 1 }));
+            backLightControl = Config.AddSetting(new ConfigDefinition("Backlight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            backLightIntensity = Config.AddSetting(new ConfigDefinition("Backlight", INTENSITY), 0.5f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            backLightColor = Config.AddSetting(new ConfigDefinition("Backlight", COLOR), new Color(1, 1, 1), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
             
-            camLightControl = Config.AddSetting(new ConfigDefinition("Camlight", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
-            camLightIntensity = Config.AddSetting(new ConfigDefinition("Camlight", "Intensity"), 0.55f, new ConfigDescription("Intensity of the Camlight.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
-            camLightColor = Config.AddSetting(new ConfigDefinition("Camlight", "Color"), new Color(1, 1, 1), new ConfigDescription("Color of the Camlight.", null, new ConfigurationManagerAttributes { Order = 1 }));
+            camLightControl = Config.AddSetting(new ConfigDefinition("Camlight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            camLightIntensity = Config.AddSetting(new ConfigDefinition("Camlight", INTENSITY), 0.55f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            camLightColor = Config.AddSetting(new ConfigDefinition("Camlight", COLOR), new Color(1, 1, 1), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
             
-            makerBackLightControl = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Enable Settings"), false, new ConfigDescription("Enable custom control settings.", null, new ConfigurationManagerAttributes { Order = 3 }));
-            makerBackLightIntensity = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Intensity"), 1f, new ConfigDescription("Intensity of the Maker Backlight.", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
-            makerBackLightColor = Config.AddSetting(new ConfigDefinition("Maker Backlight", "Color"), new Color(0.470f, 0.599f, 0.650f), new ConfigDescription("Color of the Maker Backlight.", null, new ConfigurationManagerAttributes { Order = 1 }));
+            
+            dirBackLightControl = Config.AddSetting(new ConfigDefinition("Dir Backlight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            dirBackLightIntensity = Config.AddSetting(new ConfigDefinition("Dir Backlight", INTENSITY), 0f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            dirBackLightColor = Config.AddSetting(new ConfigDefinition("Dir Backlight", COLOR), new Color(0.748f, 0.727f, 0.688f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
+            
+            dirFillLightControl = Config.AddSetting(new ConfigDefinition("Dir FillLight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            dirFillLightIntensity = Config.AddSetting(new ConfigDefinition("Dir FillLight", INTENSITY), 1f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            dirFillLightColor = Config.AddSetting(new ConfigDefinition("Dir FillLight", COLOR), new Color(0.407f, 0.469f, 0.510f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
+            
+            dirKeyLightControl = Config.AddSetting(new ConfigDefinition("Dir KeyLight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            dirKeyLightIntensity = Config.AddSetting(new ConfigDefinition("Dir KeyLight", INTENSITY), 1f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            dirKeyLightColor = Config.AddSetting(new ConfigDefinition("Dir KeyLight", COLOR), new Color(0.396f, 0.542f, 0.991f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
+            
+            dirTopLightControl = Config.AddSetting(new ConfigDefinition("Dir TopLight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            dirTopLightIntensity = Config.AddSetting(new ConfigDefinition("Dir TopLight", INTENSITY), 1f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            dirTopLightColor = Config.AddSetting(new ConfigDefinition("Dir TopLight", COLOR), new Color(0.700f, 0.674f, 0.642f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
+            
+            
+            makerBackLightControl = Config.AddSetting(new ConfigDefinition("Maker Backlight", ENABLE), false, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+            makerBackLightIntensity = Config.AddSetting(new ConfigDefinition("Maker Backlight", INTENSITY), 1f, new ConfigDescription("", new AcceptableValueRange<float>(0f, 1f), null, new ConfigurationManagerAttributes { Order = 2 }));
+            makerBackLightColor = Config.AddSetting(new ConfigDefinition("Maker Backlight", COLOR), new Color(0.470f, 0.599f, 0.650f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1 }));
 
             HarmonyWrapper.PatchAll(typeof(AI_LightSettings));
         }
@@ -100,26 +170,68 @@ namespace AI_LightSettings {
         {
             Traverse traverse = Traverse.Create(__instance);
             GameObject N_Light = traverse.Field("_charaLightNormal").GetValue<GameObject>();
+            GameObject N_Light_Custom = traverse.Field("_charaLightCustom").GetValue<GameObject>();
 
-            if (N_Light == null) return;
-
-            Transform BackLight = N_Light.transform.GetChild(0);
-            Transform CamLight = N_Light.transform.GetChild(1);
-
-            if (BackLight != null)
+            if (N_Light != null)
             {
-                Light comp = BackLight.gameObject.GetComponent<Light>();
+                Transform BackLight = N_Light.transform.Find("Back Light");
+                Transform CamLight = N_Light.transform.Find("Cam Light");
 
-                if (comp != null)
-                    backLight = comp;
+                if (BackLight != null)
+                {
+                    Light comp = BackLight.gameObject.GetComponent<Light>();
+
+                    if (comp != null)
+                        backLight = comp;
+                }
+
+                if (CamLight != null)
+                {
+                    Light comp = CamLight.gameObject.GetComponent<Light>();
+
+                    if (comp != null)
+                        camLight = comp;
+                }
             }
-
-            if (CamLight != null)
+            
+            if (N_Light_Custom != null)
             {
-                Light comp = CamLight.gameObject.GetComponent<Light>();
+                Transform Back = N_Light_Custom.transform.Find("Directional Light Back");
+                Transform Top = N_Light_Custom.transform.Find("Directional Light Top");
+                Transform Fill = N_Light_Custom.transform.Find("Directional Light Fill");
+                Transform Key = N_Light_Custom.transform.Find("Directional Light Key");
 
-                if (comp != null)
-                    camLight = comp;
+                if (Back != null)
+                {
+                    Light comp = Back.gameObject.GetComponent<Light>();
+
+                    if (comp != null)
+                        dirBackLight = comp;
+                }
+
+                if (Top != null)
+                {
+                    Light comp = Top.gameObject.GetComponent<Light>();
+
+                    if (comp != null)
+                        dirTopLight = comp;
+                }
+                
+                if (Fill != null)
+                {
+                    Light comp = Fill.gameObject.GetComponent<Light>();
+
+                    if (comp != null)
+                        dirFillLight = comp;
+                }
+
+                if (Key != null)
+                {
+                    Light comp = Key.gameObject.GetComponent<Light>();
+
+                    if (comp != null)
+                        dirKeyLight = comp;
+                }
             }
         }
         
