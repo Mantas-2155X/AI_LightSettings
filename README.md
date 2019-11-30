@@ -2,8 +2,11 @@
 
 This plugin allows you to change some light settings.
 
-**Installation**  
-* Drop AI_LightSettings.dll into `BepInEx/plugins/`.
+**Download:**  
+* Download the latest `AI_LightSettings.zip` from https://github.com/Mantas-2155X/AI_LightSettings/releases  
+
+**Installation:**  
+* Unzip `AI_LightSettings.zip` into your game directory. If done correctly, in `BepInEx/plugins/2155X/` you should see `AI_LightSettings.dll`  
 
 **Configuration**  
 * Found in the F1 menu under AI_LightSettings category. 
