@@ -9,10 +9,7 @@ This plugin allows you to change some light settings.
 * Found in the F1 menu under AI_LightSettings category. 
 
 **Features:**  
-* Facelight color & intensity,  
-* Cameralight color & intensity,  
-* Backlight color & intensity,  
-* Maker backlight color & intensity  
+* Changing the color & intensity of: facelights, cameralight, backlight, directional lights  
 
 Intensity: full, zero. See edges of clothes
 ![image1](https://i.imgur.com/vrR2LZ4.png)
