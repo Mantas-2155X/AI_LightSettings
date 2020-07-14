@@ -1,5 +1,7 @@
 # AI_LightSettings
 
+No longer maintained. Mostly replaced by: https://github.com/Mantas-2155X/HLightControl
+
 This plugin allows you to change some light settings.
 
 # DO NOT REUPLOAD WITHOUT PERMISSION | 未经许可请勿转载
